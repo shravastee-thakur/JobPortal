@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const jonSchema = new mongoose.Schema(
+const jobSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -10,16 +10,17 @@ const jonSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    requirements: {
-      type: String,
+    requirements: [
+      {
+        type: String,
+      },
+    ],
+    salary: {
+      type: Number,
       required: true,
     },
     location: {
       type: String,
-      required: true,
-    },
-    salary: {
-      type: Number,
       required: true,
     },
     jobType: {
@@ -27,9 +28,13 @@ const jonSchema = new mongoose.Schema(
       required: true,
     },
     position: {
-      type: String,
+      type: Number,
       required: true,
     },
+    // experienceLevel: {
+    //   type: String,
+    //   required: true,
+    // },
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
@@ -43,12 +48,11 @@ const jonSchema = new mongoose.Schema(
     applications: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Application",
-      default: null,
     },
   },
   { timestamps: true }
 );
 
-const Job = mongoose.model("Job", jonSchema);
+const Job = mongoose.model("Job", jobSchema);
 
 export default Job;

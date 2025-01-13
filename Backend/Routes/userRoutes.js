@@ -5,6 +5,7 @@ import {
   Register,
   updateProfile,
 } from "../Controllers/userController.js";
+import { authenticateToken } from "../Middleware/Auth.js";
 
 const router = express.Router();
 
@@ -18,6 +19,6 @@ router.post("/login", Login);
 router.post("/logout", Logout);
 
 // update profile
-router.put("/update-profile/:id", updateProfile);
+router.put("/update-profile", authenticateToken, updateProfile);
 
 export default router;

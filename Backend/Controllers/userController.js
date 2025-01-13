@@ -1,6 +1,5 @@
 import User from "../Models/userModel.js";
 import bcrypt from "bcryptjs";
-import e from "express";
 import jwt from "jsonwebtoken";
 export const Register = async (req, res) => {
   try {
@@ -104,7 +103,7 @@ export const Login = async (req, res) => {
       .cookie("token", token, {
         httpOnly: true, // client can't get cookie by script
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "none",
+        sameSite: "Strict",
         secure: true, // only transfer over https
       })
       .json({
@@ -147,17 +146,13 @@ export const updateProfile = async (req, res) => {
   try {
     // get user data
     const { fullname, email, phoneNumber, bio, skills } = req.body;
-    const file = req.file;
+    // const file = req.file;
 
-    if (!fullname || !email || !phoneNumber || !bio || !skills) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields is required",
-      });
-    }
     // check if user exist
-    const skillsArray = skills.split(",");
+    const skillsArray = skills ? skills.split(",") : [];
+
     const userId = req.user.id;
+
     const userExists = await User.findById(userId);
     if (!userExists) {
       return res.status(400).json({
@@ -169,7 +164,7 @@ export const updateProfile = async (req, res) => {
     // cloudinary upload
 
     const updatedUser = await User.findByIdAndUpdate(
-      { _id: req.user.id },
+      userId,
       { fullname, email, phoneNumber, bio, skills: skillsArray },
       { new: true }
     );

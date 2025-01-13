@@ -10,6 +10,7 @@ import connectDB from "./DB/connectDB.js";
 connectDB();
 
 import userRoutes from "./Routes/userRoutes.js";
+import companyRoutes from "./Routes/companyRoutes.js";
 
 // Middlewares
 app.use(express.json());
@@ -25,6 +26,8 @@ app.use(
 // Routes
 app.use("/api/v1/user", userRoutes);
 // http://localhost:8000/api/v1/user/register
+app.use("/api/v1/company", companyRoutes);
+// http://localhost:8000/api/v1/company/register-company
 
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
