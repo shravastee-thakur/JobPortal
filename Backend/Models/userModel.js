@@ -1,36 +1,29 @@
 import mongoose from "mongoose";
+import validator from "validator";
 
 const userSchema = new mongoose.Schema(
   {
-    fullname: {
+    name: {
       type: String,
       required: true,
+    },
+    lastName: {
+      type: String,
     },
     email: {
       type: String,
       required: true,
       unique: true,
-    },
-    phoneNumber: {
-      type: Number,
-      required: true,
+      validate: validator.isEmail,
     },
     password: {
       type: String,
       required: true,
+      minlength: [6, "Password must be at least 6 characters long"],
     },
-    role: {
+    location: {
       type: String,
-      enum: ["Student", "Recruiter"],
-      required: true,
-    },
-    profile: {
-      bio: { type: String },
-      skills: [{ type: String }],
-      resume: { type: String },
-      resumeOriginalName: { type: String },
-      company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
-      profilePhoto: { type: String, default: "" },
+      default: "India",
     },
   },
   { timestamps: true }

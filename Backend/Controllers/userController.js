@@ -4,8 +4,10 @@ import jwt from "jsonwebtoken";
 export const Register = async (req, res) => {
   try {
     // get user data
-    const { fullname, email, phoneNumber, password, role } = req.body;
-    if (!(fullname && email && phoneNumber && password && role)) {
+    const { name, email, password } = req.body;
+
+    // validation
+    if (!(name && email && password)) {
       return res.status(400).json({
         success: false,
         message: "All fields is required",
@@ -26,11 +28,9 @@ export const Register = async (req, res) => {
 
     // create user
     const user = new User({
-      fullname,
+      name,
       email,
-      phoneNumber,
       password: hashedPassword,
-      role,
     });
     await user.save();
 
@@ -71,12 +71,12 @@ export const Login = async (req, res) => {
     if (!validPassword) {
       return res.status(400).json({
         success: false,
-        message: "Email or password is incorrect",
+        message: "Incorrect email or password",
       });
     }
 
     // role check
-    if (userExists.role !== role) {
+    if (role !== userExists.role) {
       return res.status(400).json({
         success: false,
         message: "Invalid role",
@@ -84,19 +84,10 @@ export const Login = async (req, res) => {
     }
 
     // create token
-    const token = await jwt.sign(
-      { id: userExists._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    // userExists = {
-    //   fullname: userExists.fullname,
-    //   email: userExists.email,
-    //   phoneNumber: userExists.phoneNumber,
-    //   role: userExists.role,
-    //   profile: userExists.profile,
-    // };
+    const tokenData = { userId: userExists._id };
+    const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
     return res
       .status(200)
