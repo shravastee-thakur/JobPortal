@@ -34,9 +34,20 @@ export const Register = async (req, res) => {
     });
     await user.save();
 
+    const token = jwt.sign(
+      { email: user.email, id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
     return res.status(201).json({
       success: true,
-      data: user,
+      user: {
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        location: user.location,
+      },
       message: "User created successfully",
     });
   } catch (error) {
@@ -51,8 +62,8 @@ export const Register = async (req, res) => {
 export const Login = async (req, res) => {
   try {
     // get user data
-    const { email, password, role } = req.body;
-    if (!(email && password && role)) {
+    const { email, password } = req.body;
+    if (!(email && password)) {
       return res.status(400).json({
         success: false,
         message: "All fields is required",
@@ -75,14 +86,6 @@ export const Login = async (req, res) => {
       });
     }
 
-    // role check
-    if (role !== userExists.role) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid role",
-      });
-    }
-
     // create token
     const tokenData = { userId: userExists._id };
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
@@ -99,8 +102,13 @@ export const Login = async (req, res) => {
       })
       .json({
         success: true,
-        data: userExists,
-        message: `Welcome back ${userExists.fullname}`,
+        userExists: {
+          name: userExists.name,
+          lastName: userExists.lastName,
+          email: userExists.email,
+          location: userExists.location,
+        },
+        message: `Welcome back ${userExists.name}`,
       });
   } catch (error) {
     console.log(error);
@@ -136,13 +144,18 @@ export const Logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     // get user data
-    const { fullname, email, phoneNumber, bio, skills } = req.body;
-    // const file = req.file;
+    const { name, lastName, email, location } = req.body;
+    if (!(name || lastName || email || location)) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields is required",
+      });
+    }
 
     // check if user exist
-    const skillsArray = skills ? skills.split(",") : [];
 
-    const userId = req.user.id;
+    const userId = req.user.userId;
+    console.log(userId);
 
     const userExists = await User.findById(userId);
     if (!userExists) {
@@ -156,14 +169,19 @@ export const updateProfile = async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { fullname, email, phoneNumber, bio, skills: skillsArray },
+      { name, lastName, email, location },
       { new: true }
     );
     updatedUser.save();
 
     return res.status(200).json({
       success: true,
-      data: updatedUser,
+      updatedUser: {
+        name: updatedUser.name,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        location: updatedUser.location,
+      },
       message: "Profile updated successfully",
     });
   } catch (error) {

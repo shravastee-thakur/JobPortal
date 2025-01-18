@@ -2,52 +2,32 @@ import mongoose from "mongoose";
 
 const jobSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-    requirements: [
-      {
-        type: String,
-      },
-    ],
-    salary: {
-      type: Number,
-      required: true,
-    },
-    location: {
-      type: String,
-      required: true,
-    },
-    jobType: {
+    company: {
       type: String,
       required: true,
     },
     position: {
-      type: Number,
+      type: String,
       required: true,
     },
-    // experienceLevel: {
-    //   type: String,
-    //   required: true,
-    // },
-    company: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
+    status: {
+      type: String,
+      enum: ["Pending", "Accepted", "Rejected"],
+      default: "Pending",
+    },
+    workType: {
+      type: String,
+      enum: ["Full Time", "Part Time", "Internship", "Contract"],
+      default: "Full Time",
+    },
+    location: {
+      type: String,
+      default: "Mumbai",
       required: true,
     },
-    created_by: {
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
-    },
-    applications: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Application",
     },
   },
   { timestamps: true }

@@ -10,6 +10,7 @@ import connectDB from "./DB/connectDB.js";
 connectDB();
 
 import userRoutes from "./Routes/userRoutes.js";
+import jobRoutes from "./Routes/jobRoutes.js";
 import companyRoutes from "./Routes/companyRoutes.js";
 
 // Middlewares
@@ -28,6 +29,8 @@ app.use("/api/v1/user", userRoutes);
 // http://localhost:8000/api/v1/user/register
 app.use("/api/v1/company", companyRoutes);
 // http://localhost:8000/api/v1/company/register-company
+app.use("/api/v1/job", jobRoutes);
+// http://localhost:8000/api/v1/job/create-job
 
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
