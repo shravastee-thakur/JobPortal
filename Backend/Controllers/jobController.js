@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Job from "../Models/jobModel.js";
 
 export const createJob = async (req, res) => {
@@ -98,4 +99,24 @@ export const deleteJob = async (req, res) => {
       message: "Error deleting job",
     });
   }
+};
+
+export const jobStats = async (req, res) => {
+  const stats = await Job.aggregate([
+    // search jobs by user id
+
+    {
+      $match: { createdBy: new mongoose.Types.ObjectId(req.user.userId) },
+    },
+    {
+      $group: { _id: "$status", count: { $sum: 1 } },
+    },
+  ]);
+
+  return res.status(200).json({
+    success: true,
+    totalJobs: stats.length,
+    data: stats,
+    message: "Job stats fetched successfully",
+  });
 };

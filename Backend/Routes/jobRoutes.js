@@ -4,6 +4,7 @@ import {
   createJob,
   deleteJob,
   getAllJobs,
+  jobStats,
   updateJob,
 } from "../Controllers/jobController.js";
 
@@ -20,5 +21,8 @@ router.put("/update-job/:id", authenticateToken, updateJob);
 
 // delete job
 router.delete("/delete-job/:id", authenticateToken, deleteJob);
+
+// Job stats
+router.get("/job-stats", authenticateToken, jobStats);
 
 export default router;
